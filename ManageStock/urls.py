@@ -14,15 +14,51 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.urls import re_path
 from django.contrib import admin
-from django.urls import path , include
+from django.urls import path, include
 from . import views
+# Importez les viewsets de votre application stock
+from stock.views import (
+    articleCategoryViewSet,
+    articleViewSet,
+    ClientCategoryViewSet,
+    VilleViewSet,
+    ClientViewSet,
+    ProformaViewSet,
+    Pro_articleViewSet,
+    BC_articleViewSet,
+    BL_articleViewSet,
+    BonLivraisonViewSet,
+    FactureViewSet,
+    BL_FactViewSet,
+    FournisseurViewSet,
+    BonCommandeViewSet,
+)
+
+# Créez un routeur pour les viewsets de votre application stock
+from rest_framework.routers import DefaultRouter
+
+stock_router = DefaultRouter()
+stock_router.register(r'articlecategories', articleCategoryViewSet)
+stock_router.register(r'articles', articleViewSet)
+stock_router.register(r'clientcategories', ClientCategoryViewSet)
+stock_router.register(r'villes', VilleViewSet)
+stock_router.register(r'clients', ClientViewSet)
+stock_router.register(r'proformas', ProformaViewSet)
+stock_router.register(r'pro_articles', Pro_articleViewSet)
+stock_router.register(r'bc_articles', BC_articleViewSet)
+stock_router.register(r'bl_articles', BL_articleViewSet)
+stock_router.register(r'bonlivraisons', BonLivraisonViewSet)
+stock_router.register(r'factures', FactureViewSet)
+stock_router.register(r'bl_facts', BL_FactViewSet)
+stock_router.register(r'fournisseurs', FournisseurViewSet)
+stock_router.register(r'boncommandes', BonCommandeViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('stock.urls')),  # Incluez les URLs de l'application "Stock"
-    re_path('signup', views.signup),
-    re_path('login', views.login),
-    re_path('test_token', views.test_token),
+    # Ajoutez le routeur de l'application stock sous le préfixe "api/stock/"
+    path('api/stock/', include(stock_router.urls)),
+    path('signup/', views.signup),
+    path('login/', views.login),
+    path('test_token/', views.test_token),
 ]
