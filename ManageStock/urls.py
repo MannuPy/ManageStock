@@ -16,6 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from rest_framework.authtoken.views import obtain_auth_token
 from . import views
 # Importez les viewsets de votre application stock
 from stock.views import (
@@ -57,8 +58,13 @@ stock_router.register(r'boncommandes', BonCommandeViewSet)
 urlpatterns = [
     path('admin/', admin.site.urls),
     # Ajoutez le routeur de l'application stock sous le préfixe "api/stock/"
+    path('api-token-auth/', obtain_auth_token, name='api_token_auth'),
     path('api/stock/', include(stock_router.urls)),
     path('signup/', views.signup),
     path('login/', views.login),
     path('test_token/', views.test_token),
 ]
+
+
+
+

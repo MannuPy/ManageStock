@@ -1,3 +1,4 @@
+
 from django.db import models
 from django.utils import timezone
 
@@ -10,16 +11,16 @@ class articleCategory(models.Model):
 class article(models.Model):
     reference = models.CharField(max_length=255, unique=True)
     designation = models.CharField(max_length=255, unique=True)
-    type_article = models.CharField(max_length=255)  # Champs nommé en snake_case selon les conventions Django
+    type_article = models.CharField(max_length=255)
     lot = models.CharField(max_length=255)
     packaging = models.CharField(max_length=255)
-    category = models.ForeignKey(articleCategory, on_delete=models.CASCADE)  # Relation avec articleCategory
+    category = models.ForeignKey(articleCategory, on_delete=models.CASCADE)
     remise = models.IntegerField()
-    quantity_in = models.IntegerField()  # Champs nommé en snake_case selon les conventions Django
-    quantity_out = models.IntegerField()  # Champs nommé en snake_case selon les conventions Django
+    quantity_in = models.IntegerField()
+    quantity_out = models.IntegerField()
     one_sell_price = models.IntegerField()
-    total_stock = models.IntegerField()  # Champs nommé en snake_case selon les conventions Django
-    state_stock = models.SmallIntegerField()  # Champs nommé en snake_case selon les conventions Django
+    total_stock = models.IntegerField()
+    state_stock = models.SmallIntegerField()
     DatePremption = models.DateField(default=timezone.now)
 
     def __str__(self):
@@ -60,7 +61,7 @@ class Proforma(models.Model):
     total_tva = models.IntegerField()
     total_ttc = models.IntegerField()
     remise = models.IntegerField()
-    net_a_payer = models.IntegerField()  # Champs nommé en snake_case selon les conventions Django
+    net_a_payer = models.IntegerField()
 
     def __str__(self):
         return str(self.num_proforma)
@@ -77,7 +78,7 @@ class Pro_article(models.Model):
 class BC_article(models.Model):
     article = models.ForeignKey(article, on_delete=models.CASCADE)
     quantity = models.IntegerField()
-    price_one = models.IntegerField()  # Renommé le champ en snake_case
+    price_one = models.IntegerField()
 
     def __str__(self):
         return f"article: {self.article.reference}, Quantity: {self.quantity}"
@@ -85,7 +86,7 @@ class BC_article(models.Model):
 class BL_article(models.Model):
     article = models.ForeignKey(article, on_delete=models.CASCADE)
     quantity = models.IntegerField()
-    price_one = models.IntegerField()  # Renommé le champ en snake_case
+    price_one = models.IntegerField()
 
     def __str__(self):
         return f"article: {self.article.reference}, Quantity: {self.quantity}"
@@ -93,26 +94,27 @@ class BL_article(models.Model):
 class BonLivraison(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
     create_at = models.DateTimeField()
-    mode_bl = models.CharField(max_length=255)  # Champ renommé en snake_case
-    total_ht = models.IntegerField()  # Champ renommé en snake_case
+    mode_bl = models.CharField(max_length=255)
+    total_ht = models.IntegerField()
     frais_transport = models.IntegerField()
-    blarticles = models.ManyToManyField(BL_article)
+    blArticles = models.ManyToManyField(BL_article)
 
     def __str__(self):
         return f"Client: {self.client.nom}, Date: {self.create_at}"
 
 class Facture(models.Model):
-    num_facture = models.IntegerField(unique=True)  # Champ renommé en snake_case
+    num_facture = models.IntegerField(unique=True)
     create_at = models.DateTimeField()
     nature_facture = models.CharField(max_length=255)
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
-    total_ht = models.IntegerField()  # Champ renommé en snake_case
-    total_bic = models.IntegerField()  # Champ renommé en snake_case
+    total_ht = models.IntegerField()
+    total_bic = models.IntegerField()
     frais_transport = models.IntegerField()
     remise = models.IntegerField()
     total_remise = models.IntegerField()
-    total_ttc = models.IntegerField()  # Champ renommé en snake_case
-    net_a_payer = models.IntegerField()  # Champ renommé en snake_case
+    total_ttc = models.IntegerField()
+    net_a_payer = models.IntegerField()
+    etat_fact = models.BooleanField()  # Nouvelle variable
 
     def __str__(self):
         return f"Numéro Facture: {self.num_facture}, Client: {self.client.nom}"
@@ -126,16 +128,38 @@ class BL_Fact(models.Model):
 
 class Fournisseur(models.Model):
     nom = models.CharField(max_length=255)
+    telephone = models.CharField(max_length=255, unique=True)  # Téléphone est obligatoire
     address = models.TextField()
     ville = models.ForeignKey(Ville, on_delete=models.CASCADE)
-    telephone = models.CharField(unique=True, max_length=255)
-    fax = models.CharField(unique=True, max_length=255)
+    fax = models.CharField(max_length=255, unique=True)
     email = models.EmailField(unique=True)
     ifu = models.CharField(unique=True, max_length=255)
     rccm = models.CharField(unique=True, max_length=255)
 
     def __str__(self):
         return self.nom
+
+class Vente(models.Model):
+    client = models.ForeignKey(Client, on_delete=models.CASCADE)
+    fournisseur = models.ForeignKey(Fournisseur, on_delete=models.CASCADE)
+    article = models.ForeignKey(article, on_delete=models.CASCADE)
+    date_vente = models.DateTimeField()
+    quantity = models.IntegerField()
+    unit_price = models.IntegerField()
+
+    def __str__(self):
+        return f"Vente de {self.article.reference} à {self.client.nom}"
+
+class StatClient(models.Model):
+    client = models.ForeignKey(Client, on_delete=models.CASCADE)
+    article = models.ForeignKey(article, on_delete=models.CASCADE)
+    periode = models.CharField(max_length=255)  # Vous pouvez personnaliser la période
+    vente_quantity = models.IntegerField()
+
+    def __str__(self):
+        return f"Statistique de {self.client.nom} pour {self.article.reference} en {self.periode}"
+
+
 
 class BonCommande(models.Model):
     fournisseur = models.ForeignKey(Fournisseur, on_delete=models.CASCADE)
@@ -144,12 +168,12 @@ class BonCommande(models.Model):
     frais_transport = models.IntegerField()
     bcarticles = models.ManyToManyField(BC_article)
     total_bic = models.IntegerField()
-    total_ht = models.IntegerField()  # Champ renommé en snake_case
-    total_tva = models.IntegerField()  # Champ renommé en snake_case (total)
+    total_ht = models.IntegerField()
+    total_tva = models.IntegerField()
     remise = models.IntegerField()
-    total_ttc = models.IntegerField()  # Champ renommé en snake_case
+    total_ttc = models.IntegerField()
     total_remise = models.IntegerField()
-    net_a_payer = models.IntegerField()  # Champ renommé en snake_case
+    net_a_payer = models.IntegerField()
 
     def __str__(self):
         return f"Référence: {self.ref_piece}, Fournisseur: {self.fournisseur.nom}"
