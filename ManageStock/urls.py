@@ -60,8 +60,7 @@ urlpatterns = [
     # Ajoutez le routeur de l'application stock sous le préfixe "api/stock/"
     path('api-token-auth/', obtain_auth_token, name='api_token_auth'),
     path('api/stock/', include(stock_router.urls)),
-    path('signup/', views.signup),
-    path('login/', views.login),
+    path('accounts/', include('authentification.urls')), 
     path('test_token/', views.test_token),
 ]
 

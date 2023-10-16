@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'stock',
     "django.contrib.staticfiles",
     'rest_framework',
+    'authentification',
     'rest_framework.authtoken',
 ]
 

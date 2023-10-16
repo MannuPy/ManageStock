@@ -41,8 +41,8 @@ class Ville(models.Model):
 class Client(models.Model):
     nom = models.CharField(max_length=255)
     category = models.ForeignKey(ClientCategory, on_delete=models.CASCADE)
-    ifu = models.CharField(max_length=255, unique=True)
-    rccm = models.CharField(max_length=255, unique=True)
+    ifu = models.CharField(max_length=255, unique=True  ,null=True, blank=True)
+    rccm = models.CharField(max_length=255, unique=True , null=True, blank=True)
     address = models.CharField(max_length=255)
     ville = models.ForeignKey(Ville, on_delete=models.CASCADE)
     telephone = models.CharField(max_length=255, unique=True)
@@ -114,7 +114,9 @@ class Facture(models.Model):
     total_remise = models.IntegerField()
     total_ttc = models.IntegerField()
     net_a_payer = models.IntegerField()
-    etat_fact = models.BooleanField()  # Nouvelle variable
+    etat_fact = models.BooleanField(default=False)  # Nouvelle variable
+    etat_pay = models.BooleanField(default=False)  # Nouvelle variable
+
 
     def __str__(self):
         return f"Numéro Facture: {self.num_facture}, Client: {self.client.nom}"
@@ -141,7 +143,6 @@ class Fournisseur(models.Model):
 
 class Vente(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
-    fournisseur = models.ForeignKey(Fournisseur, on_delete=models.CASCADE)
     article = models.ForeignKey(article, on_delete=models.CASCADE)
     date_vente = models.DateTimeField()
     quantity = models.IntegerField()
@@ -150,9 +151,9 @@ class Vente(models.Model):
     def __str__(self):
         return f"Vente de {self.article.reference} à {self.client.nom}"
 
-class StatClient(models.Model):
-    client = models.ForeignKey(Client, on_delete=models.CASCADE)
-    article = models.ForeignKey(article, on_delete=models.CASCADE)
+class Statistique(models.Model):
+    client = models.ForeignKey(Client, on_delete=models.CASCADE  ,null=True, blank=True)
+    article = models.ForeignKey(article, on_delete=models.CASCADE  ,null=True, blank=True)
     periode = models.CharField(max_length=255)  # Vous pouvez personnaliser la période
     vente_quantity = models.IntegerField()
 
@@ -170,7 +171,7 @@ class BonCommande(models.Model):
     total_bic = models.IntegerField()
     total_ht = models.IntegerField()
     total_tva = models.IntegerField()
-    remise = models.IntegerField()
+    remise = models.IntegerField(  null=True, blank=True)
     total_ttc = models.IntegerField()
     total_remise = models.IntegerField()
     net_a_payer = models.IntegerField()
