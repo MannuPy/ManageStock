@@ -35,6 +35,7 @@ Django==3.2.5
 django-appconf==1.0.5
 django-bootstrap-icons==0.8.3
 django-countries==5.3.3
+django-cors-headers
 django-crispy-forms==1.7.2
 django-filter==23.2
 django-rest-authtoken==2.1.4
