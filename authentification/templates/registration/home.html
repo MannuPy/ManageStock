@@ -1,17 +1,23 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Page d'accueil de Gestion de Stock</title>
+    <title>Page d'accueil </title>
 </head>
 <body>
-    <h1>Bienvenue sur la Gestion de Stock</h1>
+    <h1>Welcome !!! </h1>
 
-    <p>Ceci est la page d'accueil de notre application de gestion de stock. Vous pouvez ajouter votre contenu personnalisé ici.</p>
+    <p>Ceci est la page d'accueil de notre application de gestion de stock. </p>
+    {% if user.is_authenticated %}
+    <p>Bienvenue, {{ user.username }} {{ user.first_name }} !</p>
+    {% else %}
+    <p>Bienvenue sur la page d'accueil!</p>
 
-    <!-- Exemple de lien vers la page de connexion -->
     <p><a href="{% url 'login' %}">Se connecter</a></p>
 
-    <!-- Exemple de lien vers la page d'inscription -->
     <p><a href="{% url 'signup' %}">S'inscrire</a></p>
+    {% endif %}
+
+
 </body>
 </html>
+
