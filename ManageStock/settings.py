@@ -64,7 +64,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3030',
+    'http://localhost:4200',
 ]
 
 ROOT_URLCONF = "ManageStock.urls"
